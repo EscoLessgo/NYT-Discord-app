@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { db, auth } from "@/firebase";
-import { doc, getDoc, setDoc, collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
+import { useState, useCallback } from "react";
+import { db } from "@/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export const useGamePersistence = () => {
+  const { user } = useAuth();
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const loadProgress = async () => {
-    const user = auth.currentUser;
+  const loadProgress = useCallback(async () => {
     if (!user) {
       setIsLoaded(true);
       return null;
@@ -24,15 +26,15 @@ export const useGamePersistence = () => {
 
       setIsLoaded(true);
       return null;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading progress:', error);
+      toast.error("Failed to load game", { description: error.message });
       setIsLoaded(true);
       return null;
     }
-  };
+  }, [user]);
 
-  const saveProgress = async (score: number, wordsFound: string[], pangramsFound: string[], maxScore: number) => {
-    const user = auth.currentUser;
+  const saveProgress = useCallback(async (score: number, wordsFound: string[], pangramsFound: string[], maxScore: number) => {
     if (!user) return;
 
     try {
@@ -71,20 +73,16 @@ export const useGamePersistence = () => {
       const yesterdayStr = yesterday.toISOString().split('T')[0];
 
       if (stats.last_played_date !== today) {
-        // New day save
         if (stats.last_played_date === yesterdayStr) {
           currentStreak += 1;
-        } else if (stats.last_played_date !== today) { // if skipped days, reset streak
+        } else {
           currentStreak = 1;
         }
-        // If simply updating today's game, streak doesn't change
-        // But we need to be careful not to increment gamesPlayed multiple times for same day
         gamesPlayed += 1;
       }
 
       bestStreak = Math.max(currentStreak, bestStreak);
 
-      // Rank comparison logic
       const rankValue = (rank: string) => {
         const ranks = ["Beginner", "Good Start", "Moving Up", "Good", "Solid", "Nice", "Great", "Amazing", "Genius", "Queen Bee", "Perfect!"];
         return ranks.indexOf(rank);
@@ -102,10 +100,8 @@ export const useGamePersistence = () => {
         rank: currentRank
       };
 
-      // Save game data
       await setDoc(doc(db, "users", user.uid, "games", today), gameData);
 
-      // Save stats
       await setDoc(statsRef, {
         current_streak: currentStreak,
         best_streak: bestStreak,
@@ -114,10 +110,13 @@ export const useGamePersistence = () => {
         games_played: gamesPlayed
       }, { merge: true });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving progress:', error);
+      if (error.code === 'permission-denied') {
+        toast.error("Saving Failed", { description: "Check Database Rules" });
+      }
     }
-  };
+  }, [user]);
 
-  return { loadProgress, saveProgress, isLoaded, sessionId: auth.currentUser?.uid };
+  return { loadProgress, saveProgress, isLoaded, sessionId: user?.uid };
 };
