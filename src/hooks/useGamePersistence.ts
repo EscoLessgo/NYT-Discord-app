@@ -97,10 +97,13 @@ export const useGamePersistence = () => {
         words_found: wordsFound,
         pangrams_found: pangramsFound,
         game_date: today,
-        rank: currentRank
+        rank: currentRank,
+        timestamp: new Date().toISOString()
       };
 
-      await setDoc(doc(db, "users", user.uid, "games", today), gameData);
+      // Use timestamp for unique game ID instead of just date
+      const gameId = new Date().getTime().toString();
+      await setDoc(doc(db, "users", user.uid, "games", gameId), gameData);
 
       await setDoc(statsRef, {
         current_streak: currentStreak,

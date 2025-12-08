@@ -54,7 +54,7 @@ export default function History() {
 
       try {
         const gamesRef = collection(db, "users", user.uid, "games");
-        const q = query(gamesRef, orderBy("game_date", "desc"), limit(30));
+        const q = query(gamesRef, orderBy("timestamp", "desc"), limit(50));
         const querySnapshot = await getDocs(q);
 
         const games: GameHistory[] = [];
