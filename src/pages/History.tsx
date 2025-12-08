@@ -174,7 +174,7 @@ export default function History() {
                               {format(new Date(game.game_date), "MMMM d, yyyy")}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {game.words_found?.length || 0} words • {game.score} points
+                              {Array.isArray(game.words_found) ? game.words_found.length : 0} words • {game.score} points
                             </div>
                           </div>
                         </div>
@@ -182,7 +182,7 @@ export default function History() {
                           <Badge variant="secondary" className="bg-gradient-to-r from-primary/10 to-accent/10">
                             {game.rank || getRank(game.score)}
                           </Badge>
-                          {game.pangrams_found?.length > 0 && (
+                          {Array.isArray(game.pangrams_found) && game.pangrams_found.length > 0 && (
                             <Badge className="bg-gradient-to-r from-primary to-accent">
                               {game.pangrams_found.length} Pangram{game.pangrams_found.length > 1 ? 's' : ''}
                             </Badge>
@@ -198,21 +198,25 @@ export default function History() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <div className="px-4 pb-4 pt-2 border-t">
-                      <h3 className="font-semibold mb-3">Words Found ({game.words_found?.length || 0})</h3>
+                      <h3 className="font-semibold mb-3">Words Found ({Array.isArray(game.words_found) ? game.words_found.length : 0})</h3>
                       <div className="flex flex-wrap gap-2">
-                        {game.words_found?.map((word, wordIndex) => {
-                          const isPangram = game.pangrams_found?.includes(word);
-                          return (
-                            <Badge
-                              key={wordIndex}
-                              variant={isPangram ? "default" : "outline"}
-                              className={isPangram ? "bg-gradient-to-r from-primary to-accent" : ""}
-                            >
-                              {word}
-                              {isPangram && " 🎉"}
-                            </Badge>
-                          );
-                        })}
+                        {Array.isArray(game.words_found) && game.words_found.length > 0 ? (
+                          game.words_found.map((word, wordIndex) => {
+                            const isPangram = Array.isArray(game.pangrams_found) && game.pangrams_found.includes(word);
+                            return (
+                              <Badge
+                                key={wordIndex}
+                                variant={isPangram ? "default" : "outline"}
+                                className={isPangram ? "bg-gradient-to-r from-primary to-accent" : ""}
+                              >
+                                {word}
+                                {isPangram && " 🎉"}
+                              </Badge>
+                            );
+                          })
+                        ) : (
+                          <span className="text-muted-foreground">No words found</span>
+                        )}
                       </div>
                     </div>
                   </CollapsibleContent>
