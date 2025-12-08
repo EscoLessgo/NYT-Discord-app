@@ -24,6 +24,7 @@ import { useGamePersistence } from "@/hooks/useGamePersistence";
 export const GameBoard = () => {
   const [forceDate, setForceDate] = useState<string | null>(null);
   const [puzzle, setPuzzle] = useState(() => getTodaysPuzzle(forceDate));
+  const [puzzleId, setPuzzleId] = useState<string>(() => forceDate || new Date().toISOString().split('T')[0]);
   const [currentWord, setCurrentWord] = useState("");
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [score, setScore] = useState(0);
@@ -36,7 +37,7 @@ export const GameBoard = () => {
   // Load saved progress
   useEffect(() => {
     const loadSavedProgress = async () => {
-      const savedData = await loadProgress();
+      const savedData = await loadProgress(puzzleId);
       if (savedData) {
         setScore(savedData.score);
         setFoundWords(savedData.words_found || []);
@@ -44,7 +45,7 @@ export const GameBoard = () => {
       }
     };
     loadSavedProgress();
-  }, [loadProgress]);
+  }, [loadProgress, puzzleId]);
 
   // Auto-save
   useEffect(() => {
@@ -52,9 +53,9 @@ export const GameBoard = () => {
       const pangramsFound = foundWords.filter((word) =>
         puzzle.pangrams.includes(word.toLowerCase())
       );
-      saveProgress(score, foundWords, pangramsFound, puzzle.maxScore);
+      saveProgress(puzzleId, score, foundWords, pangramsFound, puzzle.maxScore);
     }
-  }, [score, foundWords, isLoaded, puzzle.pangrams, puzzle.maxScore, saveProgress]);
+  }, [score, foundWords, isLoaded, puzzle.pangrams, puzzle.maxScore, saveProgress, puzzleId]);
 
   // Handle force roll - generate new puzzle
   const handleForceRoll = () => {
@@ -63,8 +64,12 @@ export const GameBoard = () => {
     const newDate = new Date();
     newDate.setDate(newDate.getDate() + randomOffset);
     const dateString = newDate.toISOString().split('T')[0];
-    
+
+    // Create unique ID for forced puzzle (date + timestamp)
+    const uniqueId = `${dateString}-${Date.now()}`;
+
     setForceDate(dateString);
+    setPuzzleId(uniqueId);
     const newPuzzle = getTodaysPuzzle(dateString);
     setPuzzle(newPuzzle);
     setOuterLetters(newPuzzle.outerLetters);
@@ -72,7 +77,7 @@ export const GameBoard = () => {
     setFoundWords([]);
     setScore(0);
     setRotation(0);
-    
+
     toast.success("New puzzle loaded! 🎲");
   };
 
@@ -109,7 +114,7 @@ export const GameBoard = () => {
   // Submit current word
   const handleSubmit = () => {
     const word = currentWord.toLowerCase();
-    
+
     // Always clear input after pressing enter
     setCurrentWord("");
 
@@ -187,8 +192,8 @@ export const GameBoard = () => {
           <div className="mt-4">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   className="gap-2"
                 >
@@ -200,7 +205,7 @@ export const GameBoard = () => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Get a new puzzle?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will reset your current progress and give you a completely new puzzle. 
+                    This will reset your current progress and give you a completely new puzzle.
                     Your current game will not be saved.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
