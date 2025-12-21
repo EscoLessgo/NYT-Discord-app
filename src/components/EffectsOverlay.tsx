@@ -10,12 +10,13 @@ const EffectsOverlay = () => {
     const cache = useRef<gsap.core.Timeline[]>([]);
     const [showMoments, setShowMoments] = useState(false);
 
+    // Snow logic
     useEffect(() => {
-        // Snow Particle System logic
+        if (activeLayer !== 'snow-globe') return;
         const emitter = emitterRef.current;
-        if (!emitter || activeLayer !== 'snow-globe') return;
+        if (!emitter) return;
 
-        const count = 200; // Slightly fewer for performance
+        const count = 200;
         const frequency = 120;
         let last = performance.now();
 
@@ -99,10 +100,8 @@ const EffectsOverlay = () => {
             const yPercent = e.clientY / window.innerHeight;
 
             elementsSetters.forEach((el) => {
-                if (document.querySelector(interactiveElements[0].selector)) { // Check if elements exist
-                    el.rotateXSetter(gsap.utils.interpolate(el.rotateXRange[0], el.rotateXRange[1], yPercent));
-                    el.rotateYSetter(gsap.utils.interpolate(el.rotateYRange[0], el.rotateYRange[1], xPercent));
-                }
+                el.rotateXSetter(gsap.utils.interpolate(el.rotateXRange[0], el.rotateXRange[1], yPercent));
+                el.rotateYSetter(gsap.utils.interpolate(el.rotateYRange[0], el.rotateYRange[1], xPercent));
             });
 
             if (!isAnimating.current) {
@@ -118,6 +117,39 @@ const EffectsOverlay = () => {
             window.removeEventListener("pointermove", handlePointerMove);
             if (emitter) emitter.innerHTML = '';
             cache.current = [];
+        };
+    }, [activeLayer]);
+
+    // Fire Particles Logic
+    useEffect(() => {
+        if (activeLayer !== 'fireplace') return;
+
+        const createParticles = (containerId: string, count: number, particleClass: string = "fire-particle") => {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement("div");
+                p.classList.add(particleClass);
+                p.style.animationDelay = `${(Math.random()).toFixed(2)}s`;
+                p.style.left = `calc((100% - 2.5em) * ${i / count})`;
+                container.appendChild(p);
+            }
+        };
+
+        // Delay slightly to ensure DOM is ready
+        const timer = setTimeout(() => {
+            createParticles("fire-container", 50);
+            createParticles("fire-container-2", 50);
+            createParticles("fire-container-3", 50, "fire-particle-2");
+        }, 100);
+
+        return () => {
+            clearTimeout(timer);
+            ["fire-container", "fire-container-2", "fire-container-3"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '';
+            });
         };
     }, [activeLayer]);
 
@@ -162,7 +194,7 @@ const EffectsOverlay = () => {
         <>
             {/* Layer 1: Snow Globe - Interactive overlay on the right */}
             <div className={`snow-globe-overlay transition-opacity duration-1000 ${activeLayer === 'snow-globe' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ zIndex: 30 }}>
-                <div className="snow-globe" ref={globeRef} style={{ pointerEvents: 'auto' }}>
+                <div className="snow-globe" ref={globeRef}>
                     <div className="dome">
                         <div id="emitter" ref={emitterRef}></div>
                         <img className="propeller" src="https://assets.codepen.io/86916/snow-globe-yellow-propeller.svg" alt="" data-yellow />
@@ -202,18 +234,12 @@ const EffectsOverlay = () => {
                 </div>
             </div>
 
-            {/* Layer 2: Fireplace Cat - True background, no pointer blocking */}
-            <div className={`fixed inset-0 transition-opacity duration-1000 ${activeLayer === 'fireplace' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} style={{ zIndex: -1, pointerEvents: 'none' }}>
-                <iframe
-                    width="100%"
-                    height="100%"
-                    src="https://www.youtube.com/embed/nmO6G-gM78E?autoplay=1&mute=1&loop=1&playlist=nmO6G-gM78E&controls=0&showinfo=0&rel=0&vq=hd1080"
-                    frameBorder="0"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                    style={{ objectFit: 'cover', pointerEvents: 'none' }}
-                />
-                <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+            {/* Layer 2: Fireplace - Background image and custom fire particles */}
+            <div className={`fireplace-container transition-opacity duration-1000 ${activeLayer === 'fireplace' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <img id="fire-base-img" src="https://assets.codepen.io/12550455/good-place-2.jpg" alt="Fireplace" />
+                <div id="fire-container"></div>
+                <div id="fire-container-2"></div>
+                <div id="fire-container-3"></div>
             </div>
 
             {/* SVG Definitions */}
