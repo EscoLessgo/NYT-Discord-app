@@ -1,22 +1,22 @@
 :root {
-    --bg-dark: #050510;
-    --bg-panel: rgba(20, 20, 40, 0.7);
-    --primary: #00f0ff;
-    /* Cyan Neon */
-    --primary-dim: #00a0aa;
-    --accent: #bc13fe;
-    /* Purple Neon */
-    --accent-dim: #700b99;
-    --danger: #ff003c;
-    --success: #00ff9f;
-    --text-main: #e0e0ff;
-    --text-muted: #8080a0;
+    --bg-dark: #000000;
+    --bg-panel: #111111;
+    --primary: #ffffff;
+    /* High contrast white */
+    --primary-dim: #cccccc;
+    --accent: #888888;
+    /* Grey accent */
+    --accent-dim: #555555;
+    --danger: #ff3333;
+    --success: #33ff33;
+    --text-main: #ffffff;
+    --text-muted: #bbbbbb;
 
-    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-    --neon-glow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
-    --purple-glow: 0 0 10px rgba(188, 19, 254, 0.5);
+    --glass-border: 1px solid #333333;
+    --neon-glow: none;
+    --purple-glow: none;
 
-    --font-main: 'Outfit', sans-serif;
+    --font-main: 'Montserrat', 'Outfit', sans-serif;
 }
 
 * {
@@ -29,21 +29,29 @@
 body {
     font-family: var(--font-main);
     background-color: var(--bg-dark);
-    background-image:
-        radial-gradient(circle at 10% 20%, rgba(188, 19, 254, 0.1) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.1) 0%, transparent 40%),
-        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-        url('cyberpunk_table_background.png');
-    /* Fallback or use generated if available */
-    background-size: cover;
-    background-position: center;
+    /* Plain black background */
     color: var(--text-main);
     height: 100vh;
-    height: 100dvh; /* Better mobile support */
+    height: 100dvh;
+    /* Better mobile support */
     overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
+    touch-action: none;
+}
+
+#canvas {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 9999;
+    /* Ensure it's on top of everything as a cursor effect */
+    pointer-events: none;
+    /* CLICK THROUGH IS ESSENTIAL */
 }
 
 #bg-dice-container {
@@ -65,7 +73,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 1.5rem; /* Reduced padding */
+    padding: 0.5rem 1.5rem;
+    /* Reduced padding */
     background: var(--bg-panel);
     border-bottom: var(--glass-border);
     backdrop-filter: blur(10px);
@@ -155,8 +164,10 @@ body {
     flex-direction: column;
     padding: 1rem;
     gap: 1rem;
-    overflow-y: auto; /* Scroll if needed on small screens */
-    min-height: 0; /* Important for flex child scrolling */
+    overflow-y: auto;
+    /* Scroll if needed on small screens */
+    min-height: 0;
+    /* Important for flex child scrolling */
 }
 
 .player-zones {
@@ -170,7 +181,8 @@ body {
 
 .player-card {
     flex: 0 1 auto;
-    min-width: 120px; /* Reduced min-width */
+    min-width: 120px;
+    /* Reduced min-width */
     width: 180px;
     background: var(--bg-panel);
     border: var(--glass-border);
@@ -266,7 +278,8 @@ body {
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
-    overflow: visible; /* Allow indicator out */
+    overflow: visible;
+    /* Allow indicator out */
 }
 
 .die-value-indicator {
@@ -344,10 +357,12 @@ body[data-dice-theme="neon"] .die.selected {
 }
 
 .feedback-message.hot-dice {
-    color: #39ff14; /* Neon Green */
+    color: #39ff14;
+    /* Neon Green */
     text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14;
     font-size: 5rem;
-    top: 20%; /* Position above dice */
+    top: 20%;
+    /* Position above dice */
 }
 
 .feedback-message.hidden {
@@ -375,7 +390,8 @@ body[data-dice-theme="neon"] .die.selected {
     border-radius: 20px;
     border-top: var(--glass-border);
     backdrop-filter: blur(10px);
-    flex-shrink: 0; /* Keep controls strict size */
+    flex-shrink: 0;
+    /* Keep controls strict size */
 }
 
 .current-action-info {
@@ -398,7 +414,8 @@ body[data-dice-theme="neon"] .die.selected {
 .button-group {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap; /* Wrap on small screens */
+    flex-wrap: wrap;
+    /* Wrap on small screens */
     justify-content: center;
 }
 
@@ -414,6 +431,7 @@ body[data-dice-theme="neon"] .die.selected {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
 /* Small buttons like force-turn */
 .btn.small {
     padding: 0.4rem 0.8rem;
@@ -462,6 +480,7 @@ body[data-dice-theme="neon"] .die.selected {
     border: 2px solid var(--danger);
     color: var(--danger);
 }
+
 .btn.danger:hover {
     background: var(--danger);
     color: #fff;
