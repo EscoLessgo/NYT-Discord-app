@@ -229,7 +229,7 @@ const EffectsOverlay = () => {
 
             {/* Layer 2: Fireplace - Background image and custom fire particles, always visible */}
             <div className="fireplace-container opacity-100">
-                <img id="fire-base-img" src="https://assets.codepen.io/12550455/good-place-2.jpg" alt="Fireplace" />
+                <img id="fire-base-img" src="/fireplace.jpg" alt="Fireplace" />
                 <div id="fire-container"></div>
                 <div id="fire-container-2"></div>
                 <div id="fire-container-3"></div>
