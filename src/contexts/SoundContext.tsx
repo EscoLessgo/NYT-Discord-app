@@ -21,8 +21,8 @@ export const useSound = () => {
 };
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [volume, setVolume] = useState(0.5);
-    const [musicVolume, setMusicVolume] = useState(0.3);
+    const [volume, setVolume] = useState(0.55);
+    const [musicVolume, setMusicVolume] = useState(0.1);
     const audioContextRef = useRef<AudioContext | null>(null);
     const musicRef = useRef<HTMLAudioElement | null>(null);
 
