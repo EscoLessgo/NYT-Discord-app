@@ -75,7 +75,7 @@ const Suggestions = () => {
     const filteredSubmissions = submissions.filter(s => s.type === activeTab);
 
     return (
-        <div className="min-h-screen bg-black text-white p-8">
+        <div className="relative z-20 min-h-screen bg-black text-white p-8">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12">
@@ -92,8 +92,8 @@ const Suggestions = () => {
                     <button
                         onClick={() => setActiveTab('bug')}
                         className={`flex-1 py-4 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${activeTab === 'bug'
-                                ? 'bg-red-500/20 border-2 border-red-500 text-red-400'
-                                : 'bg-gray-800 border-2 border-gray-700 text-gray-400 hover:border-gray-600'
+                            ? 'bg-red-500/20 border-2 border-red-500 text-red-400'
+                            : 'bg-gray-800 border-2 border-gray-700 text-gray-400 hover:border-gray-600'
                             }`}
                     >
                         <Bug className="w-6 h-6" />
@@ -102,8 +102,8 @@ const Suggestions = () => {
                     <button
                         onClick={() => setActiveTab('suggestion')}
                         className={`flex-1 py-4 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${activeTab === 'suggestion'
-                                ? 'bg-yellow-500/20 border-2 border-yellow-500 text-yellow-400'
-                                : 'bg-gray-800 border-2 border-gray-700 text-gray-400 hover:border-gray-600'
+                            ? 'bg-yellow-500/20 border-2 border-yellow-500 text-yellow-400'
+                            : 'bg-gray-800 border-2 border-gray-700 text-gray-400 hover:border-gray-600'
                             }`}
                     >
                         <Lightbulb className="w-6 h-6" />
@@ -158,8 +158,8 @@ const Suggestions = () => {
                             id="submit-feedback-button"
                             type="submit"
                             className={`w-full ${activeTab === 'bug'
-                                    ? 'bg-red-500 hover:bg-red-600'
-                                    : 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                                ? 'bg-red-500 hover:bg-red-600'
+                                : 'bg-yellow-500 hover:bg-yellow-600 text-black'
                                 } font-semibold text-lg py-6`}
                         >
                             <Send className="w-5 h-5 mr-2" />
@@ -197,8 +197,8 @@ const Suggestions = () => {
                                 <Card
                                     key={submission.id}
                                     className={`p-6 ${submission.type === 'bug'
-                                            ? 'bg-red-500/5 border-red-500/20'
-                                            : 'bg-yellow-500/5 border-yellow-500/20'
+                                        ? 'bg-red-500/5 border-red-500/20'
+                                        : 'bg-yellow-500/5 border-yellow-500/20'
                                         }`}
                                 >
                                     <div className="flex items-start justify-between mb-3">
