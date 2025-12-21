@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 interface SoundContextType {
     volume: number;
     setVolume: (volume: number) => void;
+    musicVolume: number;
+    setMusicVolume: (volume: number) => void;
     playClick: () => void;
     playSuccess: () => void;
     playError: () => void;
@@ -20,7 +22,9 @@ export const useSound = () => {
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [volume, setVolume] = useState(0.5);
+    const [musicVolume, setMusicVolume] = useState(0.3);
     const audioContextRef = useRef<AudioContext | null>(null);
+    const musicRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         // Initialize AudioContext
@@ -28,7 +32,42 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (AudioContext) {
             audioContextRef.current = new AudioContext();
         }
+
+        // Create and setup background music
+        const music = new Audio('/backgroundmusic.flac');
+        music.loop = true;
+        music.volume = musicVolume;
+        musicRef.current = music;
+
+        // Auto-play with user interaction
+        const handleInteraction = () => {
+            if (musicRef.current && musicRef.current.paused) {
+                musicRef.current.play().catch(err => console.log('Music autoplay prevented:', err));
+            }
+            document.removeEventListener('click', handleInteraction);
+        };
+        document.addEventListener('click', handleInteraction);
+
+        return () => {
+            document.removeEventListener('click', handleInteraction);
+            if (musicRef.current) {
+                musicRef.current.pause();
+                musicRef.current = null;
+            }
+        };
     }, []);
+
+    // Update music volume when it changes
+    useEffect(() => {
+        if (musicRef.current) {
+            musicRef.current.volume = musicVolume;
+            if (musicVolume === 0) {
+                musicRef.current.pause();
+            } else if (musicRef.current.paused) {
+                musicRef.current.play().catch(err => console.log('Music play error:', err));
+            }
+        }
+    }, [musicVolume]);
 
     const playTone = (frequency: number, type: OscillatorType, duration: number) => {
         if (!audioContextRef.current) return;
@@ -72,7 +111,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     return (
-        <SoundContext.Provider value={{ volume, setVolume, playClick, playSuccess, playError }}>
+        <SoundContext.Provider value={{ volume, setVolume, musicVolume, setMusicVolume, playClick, playSuccess, playError }}>
             {children}
         </SoundContext.Provider>
     );
