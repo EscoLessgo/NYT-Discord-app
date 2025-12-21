@@ -425,7 +425,7 @@ button#shakeButton img {
   opacity: 0.7;
 }
 
-.fire-particle {
+.particle {
   position: absolute;
   bottom: 0;
   width: 2.2em;
@@ -438,7 +438,7 @@ button#shakeButton img {
   animation: rise-fire 1s ease-in infinite;
 }
 
-.fire-particle-2 {
+.particle-2 {
   position: absolute;
   bottom: 0;
   width: 8em;
