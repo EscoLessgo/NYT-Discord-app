@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import fireplaceImg from '/fireplace.jpg';
 
 const EffectsOverlay = () => {
     const [activeLayer] = useState<'snow-globe' | 'fireplace'>('fireplace');
@@ -229,7 +230,7 @@ const EffectsOverlay = () => {
 
             {/* Layer 2: Fireplace - Background image and custom fire particles, always visible */}
             <div className="fireplace-container opacity-100">
-                <img id="fire-base-img" src="/fireplace.jpg" alt="Fireplace" />
+                <img id="fire-base-img" src={fireplaceImg} alt="Fireplace" />
                 <div id="fire-container"></div>
                 <div id="fire-container-2"></div>
                 <div id="fire-container-3"></div>
