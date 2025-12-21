@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 const EffectsOverlay = () => {
-    const [activeLayer, setActiveLayer] = useState<'snow-globe' | 'fireplace'>('snow-globe');
+    const [activeLayer] = useState<'snow-globe' | 'fireplace'>('fireplace');
     const globeRef = useRef<HTMLDivElement>(null);
     const emitterRef = useRef<HTMLDivElement>(null);
     const shakeButtonRef = useRef<HTMLButtonElement>(null);
@@ -153,13 +153,7 @@ const EffectsOverlay = () => {
         };
     }, [activeLayer]);
 
-    // Cycling transition: cycle every 30 seconds
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setActiveLayer(prev => prev === 'snow-globe' ? 'fireplace' : 'snow-globe');
-        }, 30000);
-        return () => clearInterval(interval);
-    }, []);
+
 
     const handleShake = () => {
         if (isAnimating.current) return;
