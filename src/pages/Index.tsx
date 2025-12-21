@@ -36,6 +36,9 @@ const Index = () => {
                   <p className="text-gray-300 text-sm">
                     Report bugs or share suggestions • <span className="text-yellow-400 font-mono">/suggestions</span>
                   </p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    💾 Login to save your data across devices
+                  </p>
                 </div>
               </div>
 
