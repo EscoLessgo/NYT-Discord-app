@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Moon, Sun, BarChart3, History, Home, LogIn, LogOut, User, Volume2, VolumeX, Lightbulb, Music2, CornerDownLeft } from "lucide-react";
+import { Moon, Sun, BarChart3, History, Home, LogIn, LogOut, User, Volume2, VolumeX, Lightbulb, CornerDownLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -15,7 +15,7 @@ import { useSound } from "@/contexts/SoundContext";
 export const Navigation = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, login, logout, loading } = useAuth();
-  const { volume, setVolume, musicVolume, setMusicVolume } = useSound();
+  const { volume, setVolume } = useSound();
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -121,24 +121,7 @@ export const Navigation = () => {
                     onValueChange={(value) => setVolume(value[0])}
                   />
 
-                  {/* Music Volume Controller */}
-                  <div className="border-t border-border/50 pt-4 mt-2">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold leading-none flex items-center gap-2 text-primary">
-                        <Music2 className="h-4 w-4" />
-                        Background Music
-                      </h4>
-                      <span className="w-12 rounded-md bg-muted px-2 py-0.5 text-right text-sm font-medium">
-                        {Math.round(musicVolume * 100)}%
-                      </span>
-                    </div>
-                    <Slider
-                      value={[musicVolume]}
-                      max={1}
-                      step={0.01}
-                      onValueChange={(value) => setMusicVolume(value[0])}
-                    />
-                  </div>
+
 
                 </div>
               </PopoverContent>

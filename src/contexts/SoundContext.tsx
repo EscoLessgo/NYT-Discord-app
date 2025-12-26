@@ -3,8 +3,6 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 interface SoundContextType {
     volume: number;
     setVolume: (volume: number) => void;
-    musicVolume: number;
-    setMusicVolume: (volume: number) => void;
     playClick: () => void;
     playSuccess: () => void;
     playError: () => void;
@@ -22,9 +20,7 @@ export const useSound = () => {
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [volume, setVolume] = useState(0.55);
-    const [musicVolume, setMusicVolume] = useState(0.1);
     const audioContextRef = useRef<AudioContext | null>(null);
-    const musicRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         // Initialize AudioContext
@@ -33,22 +29,12 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             audioContextRef.current = new AudioContext();
         }
 
-        // Create and setup background music
-        const music = new Audio('/backgroundmusic.mp3');
-        music.loop = true;
-        music.volume = musicVolume;
-        music.preload = 'auto';
-        musicRef.current = music;
-
-        // Auto-play with user interaction
+        // Auto-play checks for AudioContext only (music removed)
         const handleInteraction = async () => {
             if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
                 await audioContextRef.current.resume();
             }
 
-            if (musicRef.current && musicRef.current.paused && musicVolume > 0) {
-                musicRef.current.play().catch(err => console.log('Music autoplay prevented:', err));
-            }
             document.removeEventListener('mousedown', handleInteraction);
             document.removeEventListener('keydown', handleInteraction);
         };
@@ -59,26 +45,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return () => {
             document.removeEventListener('mousedown', handleInteraction);
             document.removeEventListener('keydown', handleInteraction);
-            if (musicRef.current) {
-                musicRef.current.pause();
-                musicRef.current = null;
-            }
         };
     }, []);
-
-    // Update music volume when it changes
-    useEffect(() => {
-        if (musicRef.current) {
-            musicRef.current.volume = musicVolume;
-            if (musicVolume === 0) {
-                musicRef.current.pause();
-            } else if (musicRef.current.paused && musicVolume > 0) {
-                // Try to play if we have volume and it's paused
-                // This might fail if no interaction yet, but that's handled by handleInteraction
-                musicRef.current.play().catch(() => { });
-            }
-        }
-    }, [musicVolume]);
 
     const playTone = (frequency: number, type: OscillatorType, duration: number) => {
         if (!audioContextRef.current) return;
@@ -122,7 +90,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     return (
-        <SoundContext.Provider value={{ volume, setVolume, musicVolume, setMusicVolume, playClick, playSuccess, playError }}>
+        <SoundContext.Provider value={{ volume, setVolume, playClick, playSuccess, playError }}>
             {children}
         </SoundContext.Provider>
     );

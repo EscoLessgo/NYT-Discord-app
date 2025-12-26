@@ -52,11 +52,7 @@ export const LoadingScreen = () => {
             <p className="text-sm text-gray-500 mt-4">{progress}%</p>
 
             {/* Music Note Animation */}
-            <div className="mt-8 flex gap-2">
-                <Music className="w-6 h-6 text-yellow-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                <Music className="w-6 h-6 text-yellow-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                <Music className="w-6 h-6 text-yellow-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-            </div>
+
         </div>
     );
 };
